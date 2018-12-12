@@ -1,17 +1,18 @@
 package com.izdebski.PeopleManagementSpringBootDataApp;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import com.izdebski.PeopleManagementSpringBootDataApp.entity.Person;
-import com.izdebski.PeopleManagementSpringBootDataApp.dao.PeopleManagementService;
+import com.izdebski.PeopleManagementSpringBootDataApp.service.PeopleManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
+@EnableAsync
 public class PeopleManagementSpringBootDataAppApplication implements CommandLineRunner{
 
 	@Autowired
@@ -23,23 +24,9 @@ public class PeopleManagementSpringBootDataAppApplication implements CommandLine
 
 	@Override
 	public void run(String... args) throws Exception {
-		//createPerson();
-		createPersons();
-	}
 
-	private void createPersons() {
-		List<Person> personList = Arrays.asList(new Person("Barry", "Johnson", "barry1.j2019@Gmail.com",
-				new Date()),new Person("Kishan", "Kumar", "kishan1.cs2019@yahoo.com", new Date()));
-		Iterable<Person> createPersons = peopleManagementService.createPersons(personList);
-		for (Person person : createPersons) {
-			System.out.println(person);
-		}
-
-	}
-
-	private void createPerson() {
-		Person person1 = new Person("Sean", "Muphy", "sean.m2017@gamil.com", new Date());
-		Person personDb = peopleManagementService.createPerson(person1);
-		System.out.println(personDb);
+		CompletableFuture<Person> completableFuture = peopleManagementService.findByEmail("maya.m2018@gmail.com");
+		Person person = completableFuture.get(20, TimeUnit.SECONDS);
+		System.out.println(person);
 	}
 }
